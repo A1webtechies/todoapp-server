@@ -15,11 +15,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new NotFoundException('Email or Password is incorrect!');
     }
-    if (!user?.emailVerified) {
-      throw new NotFoundException(
-        'Email is not verified, please check your inbox or reset your password!',
-      );
-    }
+
     return user;
   }
 }

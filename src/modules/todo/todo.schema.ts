@@ -1,8 +1,10 @@
 import * as mongoose from 'mongoose';
 
 import { Document } from 'mongoose';
+import { USERS } from 'src/constants';
 
 export interface ITodo extends Document {
+  createdBy: string;
   title: string;
   status: boolean;
   createdAt: Date;
@@ -12,15 +14,19 @@ export interface ITodo extends Document {
 
 const TodoSchema = new mongoose.Schema<ITodo>(
   {
+    createdBy: {
+      type: mongoose.Types.ObjectId,
+      ref: USERS,
+    },
     title: {
       type: String,
+      required: true,
     },
-    cover: {
-      type: String,
+    status: {
+      type: Boolean,
+      default: false,
     },
-    order: {
-      type: Number,
-    },
+
     deletedAt: Date,
   },
   { timestamps: true },

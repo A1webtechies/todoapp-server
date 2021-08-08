@@ -1,12 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-
-import { jwtConstants } from 'src/constants';
-import { Model } from 'mongoose';
-
-import { env } from 'process';
 
 @Injectable()
 export class AuthService {

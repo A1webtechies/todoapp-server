@@ -33,29 +33,4 @@ export class UserService extends BaseService {
   async findByUsername(username: string): Promise<IUserDocument | undefined> {
     return this.userRepository.findOne({ username: username });
   }
-
-  async create(body: any) {
-    return this.userRepository.create(body);
-  }
-
-  async updatePassword(body: any) {
-    await this.userRepository.updateOne(
-      { email: body.email },
-      { password: body.password, emailVerified: true },
-    );
-  }
-
-  async readNotification(userId: string, readDate: Date) {
-    return await this.userRepository.findByIdAndUpdate(userId, {
-      notificationReadDate: readDate,
-    });
-  }
-  async readInvites(userId: string, readDate: Date) {
-    return await this.userRepository.findByIdAndUpdate(userId, {
-      inviteReadDate: readDate,
-    });
-  }
-  async getTotalUsers() {
-    return await this.userRepository.countDocuments({});
-  }
 }

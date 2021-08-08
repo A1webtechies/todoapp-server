@@ -1,12 +1,9 @@
 import {
   Body,
   Controller,
-  Get,
   HttpStatus,
   Logger,
-  Param,
   Post,
-  Query,
   Req,
   Res,
   UseGuards,
@@ -18,8 +15,6 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import * as bcrypt from 'bcrypt';
 import { jwtConstants } from 'src/constants';
-import { AuthGuard } from '@nestjs/passport';
-import { env } from 'process';
 
 @Controller('auth')
 export class AuthController {
@@ -39,8 +34,7 @@ export class AuthController {
   ) {
     try {
       const response = await this.authService.login(req.user);
-      return res.json({
-        status: 'success',
+      return res.status(HttpStatus.OK).json({
         message: 'Successfully LoggedIn',
         data: response,
       });
@@ -51,29 +45,25 @@ export class AuthController {
     }
   }
 
-  @Post('signup')
-  async signup(@Body() signupDto: SignupDto, @Res() res: Response) {
+  @Post('/register')
+  async register(@Body() body: SignupDto, @Res() res: Response) {
     try {
-      const checkUserWithEmail = await this.userService.findByEmail(
-        signupDto.email,
-      );
+      const user = await this.userService.findByEmail(body.email);
 
-      if (checkUserWithEmail && checkUserWithEmail.email) {
+      if (user && user.email) {
         return res
-          .status(409)
+          .status(HttpStatus.CONFLICT)
           .json({ status: 'error', message: 'EMAIL Already Registered' });
       }
 
-      const createUser = await this.userService.create({
-        ...signupDto,
-        roles: ['user'],
-        emailVerified: false,
-        password: bcrypt.hashSync(signupDto.password, jwtConstants.salt),
+      await this.userService.createModel({
+        ...body,
+        password: bcrypt.hashSync(body.password, jwtConstants.salt),
       });
 
-      return res.status(201).json({
+      return res.status(HttpStatus.OK).json({
         status: 'success',
-        message: 'Please check your inbox to verify email.',
+        message: 'Your account has been created',
       });
     } catch (error) {
       this.logger.error(error);
